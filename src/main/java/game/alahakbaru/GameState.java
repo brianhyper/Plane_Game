@@ -1,4 +1,7 @@
-package game.alahakbargame;
+package game.alahakbaru;
 
-public class GameState {
+public enum GameState {
+    START,
+    PLAYING,
+    GAME_OVER
 }
