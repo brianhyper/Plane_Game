@@ -1,11 +1,44 @@
 package game.alahakbaru;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Plane {
     private int x = 100;
     private int y;
     private int velocity;
+    private BufferedImage planeImage;
+
+    public Plane() {
+        reset();
+        loadImage();
+    }
+
+    private void loadImage() {
+        try {
+            planeImage = ImageIO.read(getClass().getResource("/plane.png"));
+        } catch (IOException | IllegalArgumentException e) {
+            planeImage = new BufferedImage(GameConstants.PLANE_WIDTH, GameConstants.PLANE_HEIGHT,
+                    BufferedImage.TYPE_INT_ARGB);
+            Graphics g = planeImage.getGraphics();
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, GameConstants.PLANE_WIDTH, GameConstants.PLANE_HEIGHT);
+            g.setColor(Color.BLUE);
+            g.fillRect(GameConstants.PLANE_WIDTH - 20, 5, 15, 15);
+            g.setColor(Color.RED);
+            int[] xPoints = {GameConstants.PLANE_WIDTH, GameConstants.PLANE_WIDTH + 15, GameConstants.PLANE_WIDTH};
+            int[] yPoints = {10, GameConstants.PLANE_HEIGHT/2, GameConstants.PLANE_HEIGHT - 10};
+            g.fillPolygon(xPoints, yPoints, 3);
+            g.dispose();
+        }
+    }
+
+    public void reset() {
+        y = GameConstants.HEIGHT / 2 - GameConstants.PLANE_HEIGHT / 2;
+        velocity = 0;
+    }
 
     public void update() {
         velocity += GameConstants.GRAVITY;
@@ -15,34 +48,17 @@ public class Plane {
     public void jump() {
         velocity = GameConstants.JUMP_STRENGTH;
     }
-    public void reset() {
-        y = GamePanel.HEIGHT / 2 - SIZE/2;
-        velocity = 0;
-    }
 
     public void draw(Graphics g) {
-        // Plane body
-        g.setColor(Color.WHITE);
-        g.fillRect(x, y, SIZE, SIZE);
-
-        // Plane details
-        g.setColor(Color.BLUE);
-        g.fillRect(x + SIZE - 15, y + 5, 10, 10); // Cockpit
-
-        g.fillRect(x, y + SIZE/2 - 5, 20, 10); // Wings
-
-        // Tail
-        g.setColor(Color.RED);
-        int[] xPoints = {x + SIZE, x + SIZE + 15, x + SIZE};
-        int[] yPoints = {y + 10, y + SIZE/2, y + SIZE - 10};
-        g.fillPolygon(xPoints, yPoints, 3);
+        g.drawImage(planeImage, x, y, null);
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, SIZE, SIZE);
+        return new Rectangle(x, y, GameConstants.PLANE_WIDTH, GameConstants.PLANE_HEIGHT);
     }
 
     public int getX() { return x; }
     public int getY() { return y; }
-    public int getSize() { return SIZE; }
+    public int getWidth() { return GameConstants.PLANE_WIDTH; }
+    public int getHeight() { return GameConstants.PLANE_HEIGHT; }
 }

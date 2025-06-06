@@ -1,6 +1,9 @@
 package game.alahakbaru;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Building {
     private int x;
@@ -8,6 +11,7 @@ public class Building {
     private int width;
     private int height;
     private boolean passed;
+    private BufferedImage buildingImage;
 
     public Building(int x, int y, int width, int height) {
         this.x = x;
@@ -15,6 +19,33 @@ public class Building {
         this.width = width;
         this.height = height;
         this.passed = false;
+        loadImage();
+    }
+
+    private void loadImage() {
+        try {
+            buildingImage = ImageIO.read(getClass().getResource("/building.png"));
+        } catch (IOException | IllegalArgumentException e) {
+            buildingImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = buildingImage.getGraphics();
+            g.setColor(new Color(70, 70, 70));
+            g.fillRect(0, 0, width, height);
+            g.setColor(new Color(200, 230, 255, 200));
+
+            int windowSize = 10;
+            int windowSpacing = 20;
+            int startX = 10;
+            int startY = 10;
+
+            for (int row = startY; row < height - windowSize; row += windowSpacing) {
+                for (int col = startX; col < width - windowSize; col += windowSpacing) {
+                    if (Math.random() > 0.3) {
+                        g.fillRect(col, row, windowSize, windowSize);
+                    }
+                }
+            }
+            g.dispose();
+        }
     }
 
     public void move() {
@@ -22,37 +53,7 @@ public class Building {
     }
 
     public void draw(Graphics g) {
-        // Building color based on height
-        Color buildingColor = height > 300 ? new Color(70, 70, 70) :
-                height > 150 ? new Color(90, 90, 90) :
-                        new Color(110, 110, 110);
-
-        g.setColor(buildingColor);
-        g.fillRect(x, y, width, height);
-
-        // Building outline
-        g.setColor(Color.BLACK);
-        g.drawRect(x, y, width, height);
-
-        // Draw windows
-        drawWindows(g);
-    }
-
-    private void drawWindows(Graphics g) {
-        g.setColor(new Color(200, 230, 255, 200));
-
-        int windowSize = 10;
-        int windowSpacing = 20;
-        int startX = x + 10;
-        int startY = y + 10;
-
-        for (int row = startY; row < y + height - windowSize; row += windowSpacing) {
-            for (int col = startX; col < x + width - windowSize; col += windowSpacing) {
-                if (Math.random() > 0.3) { // Randomize some windows
-                    g.fillRect(col, row, windowSize, windowSize);
-                }
-            }
-        }
+        g.drawImage(buildingImage, x, y, width, height, null);
     }
 
     public Rectangle getBounds() {

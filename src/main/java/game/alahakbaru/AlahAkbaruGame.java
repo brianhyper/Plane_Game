@@ -5,7 +5,7 @@ import javax.swing.*;
 public class AlahAkbaruGame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Alah Akbaru");
+            JFrame frame = new JFrame("Alah Akbaru - City Skies Challenge");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
@@ -16,7 +16,8 @@ public class AlahAkbaruGame {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
 
-            gamePanel.startGame();
+            // Start with the welcome screen
+            gamePanel.requestFocusInWindow();
         });
     }
 }
