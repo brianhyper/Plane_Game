@@ -1,50 +1,53 @@
 package game.alahakbaru;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
 public class HighScoreManager {
-    private static final String HIGH_SCORE_FILE = "highscore.dat";
-    private List<ScoreRecord> highScores;
+    private static final String FILE_PATH = "highscores.dat";
+    private static final int MAX_SCORES = 10;
 
-    public HighScoreManager() {
-        highScores = loadHighScores();
+    public static void saveScore(int score) {
+        List<Integer> scores = loadScores();
+        scores.add(score);
+        scores.sort(Collections.reverseOrder());
+
+        if (scores.size() > MAX_SCORES) {
+            scores = scores.subList(0, MAX_SCORES);
+        }
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(FILE_PATH))) {
+            oos.writeObject(scores);
+        } catch (IOException e) {
+            System.err.println("Error saving scores: " + e.getMessage());
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    private List<ScoreRecord> loadHighScores() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(HIGH_SCORE_FILE))) {
-            return (List<ScoreRecord>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+    public static List<Integer> loadScores() {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) return new ArrayList<>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream(file))) {
+            return (List<Integer>) ois.readObject();
+        } catch (Exception e) {
+            System.err.println("Error loading scores: " + e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    public void addScore(int score) {
-        highScores.add(new ScoreRecord(score));
-        Collections.sort(highScores);
+    public static void showHighScores(JFrame parent) {
+        List<Integer> scores = loadScores();
 
-        // Keep only top 10 scores
-        if (highScores.size() > 10) {
-            highScores = highScores.subList(0, 10);
+        StringBuilder sb = new StringBuilder("<html><h1>High Scores</h1><ol>");
+        for (int i = 0; i < Math.min(scores.size(), MAX_SCORES); i++) {
+            sb.append("<li>").append(scores.get(i)).append("</li>");
         }
+        sb.append("</ol></html>");
 
-        saveHighScores();
-    }
-
-    private void saveHighScores() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(HIGH_SCORE_FILE))) {
-            oos.writeObject(highScores);
-        } catch (IOException e) {
-            System.err.println("Error saving high scores: " + e.getMessage());
-        }
-    }
-
-    public List<ScoreRecord> getHighScores() {
-        return new ArrayList<>(highScores);
-    }
-
-    public int getHighestScore() {
-        return highScores.isEmpty() ? 0 : highScores.get(0).getScore();
+        JOptionPane.showMessageDialog(parent, sb.toString(),
+                "Top Scores", JOptionPane.INFORMATION_MESSAGE);
     }
 }
