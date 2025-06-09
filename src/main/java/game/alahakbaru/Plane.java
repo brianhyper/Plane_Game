@@ -1,48 +1,64 @@
 package game.alahakbaru;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Plane {
-    private int x = 100;
-    private int y;
+    // Plane constants
+    private static final int FLAP_FORCE = -15;  // Negative because y increases downward
+    private static final int PLANE_WIDTH = 50;
+    private static final int PLANE_HEIGHT = 30;
+
+    private int x, y;
     private int velocity;
+    private BufferedImage image;
+
+    public Plane(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.velocity = 0;
+    }
 
     public void update() {
-        velocity += GameConstants.GRAVITY;
         y += velocity;
     }
 
-    public void jump() {
-        velocity = GameConstants.JUMP_STRENGTH;
-    }
-    public void reset() {
-        y = GamePanel.HEIGHT / 2 - SIZE/2;
-        velocity = 0;
+    public void flap() {
+        velocity = FLAP_FORCE;
     }
 
-    public void draw(Graphics g) {
-        // Plane body
-        g.setColor(Color.WHITE);
-        g.fillRect(x, y, SIZE, SIZE);
-
-        // Plane details
-        g.setColor(Color.BLUE);
-        g.fillRect(x + SIZE - 15, y + 5, 10, 10); // Cockpit
-
-        g.fillRect(x, y + SIZE/2 - 5, 20, 10); // Wings
-
-        // Tail
-        g.setColor(Color.RED);
-        int[] xPoints = {x + SIZE, x + SIZE + 15, x + SIZE};
-        int[] yPoints = {y + 10, y + SIZE/2, y + SIZE - 10};
-        g.fillPolygon(xPoints, yPoints, 3);
+    public void applyGravity(int gravity) {
+        velocity += gravity;
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, SIZE, SIZE);
+        return new Rectangle(x, y, PLANE_WIDTH, PLANE_HEIGHT);
     }
 
+    public void draw(Graphics2D g2d) {
+        if (image != null) {
+            g2d.drawImage(image, x, y, PLANE_WIDTH, PLANE_HEIGHT, null);
+        } else {
+            // Draw placeholder plane
+            g2d.setColor(Color.RED);
+            g2d.fillRect(x, y, PLANE_WIDTH, PLANE_HEIGHT);
+
+            // Draw wings
+            g2d.setColor(Color.BLUE);
+            int[] xPoints = {x + PLANE_WIDTH, x + PLANE_WIDTH + 20, x + PLANE_WIDTH};
+            int[] yPoints = {y, y + PLANE_HEIGHT/2, y + PLANE_HEIGHT};
+            g2d.fillPolygon(xPoints, yPoints, 3);
+        }
+    }
+
+    // Getters
     public int getX() { return x; }
     public int getY() { return y; }
-    public int getSize() { return SIZE; }
+    public int getWidth() { return PLANE_WIDTH; }
+    public int getHeight() { return PLANE_HEIGHT; }
+
+    // Setter for image
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
 }

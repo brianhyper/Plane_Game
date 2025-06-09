@@ -5,18 +5,17 @@ import javax.swing.*;
 public class AlahAkbaruGame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Alah Akbaru");
+            JFrame frame = new JFrame("AlahAkbaru");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
-            GamePanel gamePanel = new GamePanel();
-            frame.add(gamePanel);
-
+            WelcomeScreen welcomeScreen = new WelcomeScreen(frame);
+            frame.add(welcomeScreen);
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
 
-            gamePanel.startGame();
+            welcomeScreen.playIntro();
         });
     }
 }

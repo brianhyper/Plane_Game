@@ -1,7 +1,9 @@
-package game.alahakbaru;
-
 public enum GameState {
-    START,
+    WELCOME,
+    MENU,
     PLAYING,
-    GAME_OVER
+    PAUSED,
+    GAMEOVER,
+    HIGH_SCORES,
+    ABOUT
 }
